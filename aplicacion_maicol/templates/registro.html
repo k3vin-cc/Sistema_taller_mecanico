@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro-form.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<div id="toast" class="toast is-hidden" data-server-success="{{ 'true' if exito else 'false' }}" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" aria-hidden="true">✓</div>
+    <div class="toast-text">
+        <span class="toast-title">Registro exitoso</span>
+        <span id="toastMessage">Dato guardado correctamente</span>
+    </div>
+    <button id="toastClose" type="button" class="toast-close" aria-label="Cerrar">✕</button>
+</div>
+
+<h2>Registro de Datos</h2>
+
+<form method="get" action="/registro" id="tablaForm">
+    <div class="selector-container">
+        <label for="tabla">Seleccionar tabla:</label>
+        <select id="tabla" name="tabla" onchange="document.getElementById('tablaForm').submit();">
+            <option value="cliente" {% if tabla == 'cliente' or not tabla %}selected{% endif %}>Cliente</option>
+            <option value="vehiculo" {% if tabla == 'vehiculo' %}selected{% endif %}>Vehículo</option>
+            <option value="marca" {% if tabla == 'marca' %}selected{% endif %}>Marca</option>
+            <option value="transmision" {% if tabla == 'transmision' %}selected{% endif %}>Transmisión</option>
+            <option value="traccion" {% if tabla == 'traccion' %}selected{% endif %}>Tracción</option>
+            <option value="combustible" {% if tabla == 'combustible' %}selected{% endif %}>Tipo de Combustible</option>
+        </select>
+    </div>
+</form>
+
+<hr>
+
+<form method="post" id="mainForm" enctype="multipart/form-data">
+{% if tabla == "cliente" or not tabla %}
+    <h3>Agregar Cliente</h3>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">👤 Datos Personales</div>
+        <div class="accordion-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="nombres" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Apellido</label>
+                    <input type="text" name="apellidos" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>RUT</label>
+                    <input type="text" name="rut" placeholder="20.891.996-2" autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">📞 Contacto</div>
+        <div class="accordion-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono Principal</label>
+                    <input type="tel" name="numero_contacto" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono Alternativo</label>
+                    <input type="tel" name="numero_contacto_alternativo" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="correo_electronico" autocomplete="off" placeholder="Opcional">
+            </div>
+            <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" name="direccion" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+{% elif tabla == "vehiculo" %}
+    <h3>Agregar Vehículo</h3>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">👤 Cliente</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Seleccionar Cliente</label>
+                <select name="cliente_id" id="clienteSelect" required>
+                    <option value="">-- Seleccionar Cliente --</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">📋 Información Básica</div>
+        <div class="accordion-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Marca</label>
+                    <select name="marca_id" id="marcaSelect" required>
+                        <option value="">-- Seleccionar Marca --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" name="modelo" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Año de Elaboración</label>
+                    <input type="number" name="anio_elaboracion" min="1900" max="2099" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" name="color" autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">🔧 Identificación</div>
+        <div class="accordion-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Patente (Placa)</label>
+                    <input type="text" name="patente" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Número de Chasis</label>
+                    <input type="text" name="numero_chasis" required autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Cilindrada</label>
+                <input type="text" name="cilindrada" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">⚙️ Especificaciones</div>
+        <div class="accordion-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Transmisión</label>
+                    <select name="transmision_id" id="transmisionSelect">
+                        <option value="">-- Seleccionar Transmisión --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tracción</label>
+                    <select name="traccion_id" id="traccionSelect">
+                        <option value="">-- Seleccionar Tracción --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Combustible</label>
+                <select name="tipo_combustible_id" id="combustibleSelect">
+                    <option value="">-- Seleccionar Combustible --</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Tipos de Aceite (Motor, Caja, Dirección, etc.)</label>
+                <textarea name="tipo_aceite" rows="4" placeholder="Ej:\nMotor: 5W-30\nCaja: 75W-90\nDirección: ATF Dexron III" autocomplete="off"></textarea>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">🖼️ Imagen del Vehículo</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Seleccionar Imagen Guardada</label>
+                <select name="imagen_id" id="imagenSelect">
+                    <option value="">-- Seleccionar Imagen --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>O Subir Nueva Imagen (subida automática)</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <label for="inputImagen" class="btn-file-upload">
+                        📁 Seleccionar Archivo
+                        <input type="file" id="inputImagen" accept="image/*" style="display: none;">
+                    </label>
+                    <label for="inputCamara" class="btn-camera-upload">
+                        📷 Tomar Foto
+                        <input type="file" id="inputCamara" accept="image/*" capture="environment" style="display: none;">
+                    </label>
+                </div>
+                <div id="estadoImagen" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+            </div>
+            <div id="previewImagen" style="margin-top: 15px;">
+                <img id="imagenPreview" src="" alt="Preview" style="max-width: 300px; max-height: 300px; display: none; border-radius: 4px; border: 1px solid #ddd; padding: 5px;">
+            </div>
+        </div>
+    </div>
+
+{% elif tabla == "marca" %}
+    <h3>Agregar Marca</h3>
+
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">🏷️ Datos de la Marca</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Nombre de la Marca</label>
+                <input type="text" name="nombre" required autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+{% elif tabla == "transmision" %}
+    <h3>Agregar Transmisión</h3>
+
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">⚙️ Tipo de Transmisión</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Tipo de Transmisión</label>
+                <input type="text" name="nombre" placeholder="Ej: Manual, Automática, CVT" required autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+{% elif tabla == "traccion" %}
+    <h3>Agregar Tracción</h3>
+
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">🔀 Tipo de Tracción</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Tipo de Tracción</label>
+                <input type="text" name="nombre" placeholder="Ej: Delantera, Trasera, 4x4" required autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+{% elif tabla == "combustible" %}
+    <h3>Agregar Tipo de Combustible</h3>
+
+    <div class="accordion">
+        <div class="accordion-header active" onclick="toggleAccordion(this)">⛽ Tipo de Combustible</div>
+        <div class="accordion-content active">
+            <div class="form-group">
+                <label>Tipo de Combustible</label>
+                <input type="text" name="nombre" placeholder="Ej: Gasolina, Diésel, Eléctrico, Híbrido" required autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% if current_user and current_user.rol == 'visor' %}
+<button type="button" disabled title="Solo lectura para visor">Guardar (solo lectura)</button>
+{% else %}
+<button type="submit">Guardar</button>
+{% endif %}
+
+</form>
+
+<br>
+<a href="/">⟵ Volver</a>
+
+<script src="{{ url_for('static', filename='js/registro.js') }}"></script>
+
+</body>
+</html>

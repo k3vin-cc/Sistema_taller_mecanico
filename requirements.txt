@@ -1,0 +1,25 @@
+# Dependencias para el proyecto completo de Don Michel
+# Este archivo contiene todas las dependencias necesarias para ejecutar el proyecto
+
+# Web framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Procesamiento de imágenes
+Pillow==12.0.0
+
+# Seguridad y autenticación
+bcrypt==4.1.1
+
+# Módulos estándar utilizados (incluidos en Python):
+# - sqlite3: Base de datos
+# - os: Operaciones del sistema operativo
+# - json: Manejo de JSON
+# - datetime: Manejo de fechas y horas
+# - io: Operaciones de entrada/salida
+
+# Herramientas opcionales para desarrollo:
+# flask-cors==4.0.0  # Para habilitar CORS
+# python-dotenv==1.0.0  # Para cargar variables de entorno desde .env
+# pytest==7.4.0  # Para testing
+# black==23.0.0  # Para formatear código

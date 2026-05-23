@@ -1,0 +1,1051 @@
+
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+
+.modal-content.modal-edit {
+    width: 95%;
+    max-width: 860px;
+    max-height: 90vh;
+    overflow: auto;
+}
+
+.modal-title {
+    margin: 0 0 12px 0;
+    color: var(--text-primary);
+    font-size: 1.25rem;
+}
+
+.modal-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.modal-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-form .form-group-full {
+    grid-column: 1 / -1;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+    .modal-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+}
+
+.btn-cancelar {
+    background-color: #999;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-cancelar:hover {
+    background-color: #777;
+}
+
+.btn-guardar {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-guardar:hover {
+    background-color: #45a049;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+}
+.form-group label {
+    display: block;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+
+.vehicle-image,
+#imagenPreview,
+#imagenEditPreview {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+.vehicle-image-thumbnail {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.vehicle-image-thumbnail:hover {
+    transform: scale(1.1);
+}
+
+
+.btn-file-upload,
+.btn-camera-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-file-upload {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.btn-file-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-camera-upload {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+}
+
+.btn-camera-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+.btn-file-upload:active,
+.btn-camera-upload:active {
+    transform: translateY(0);
+}
+
+
+@media (max-width: 768px) {
+    .btn-file-upload,
+    .btn-camera-upload {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+}
+
+
+.vehiculos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.vehiculo-card {
+    background: var(--bg-card, #222222);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid var(--border, #444444);
+}
+
+.vehiculo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 68, 68, 0.3);
+    border-color: var(--primary, #ff4444);
+}
+
+.card-imagen {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary, #ff4444) 0%, var(--primary-dark, #dd0000) 100%);
+    position: relative;
+}
+
+.card-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.card-imagen img:hover {
+    transform: scale(1.05);
+}
+
+.sin-imagen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.sin-imagen span {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.sin-imagen p {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-content {
+    padding: 20px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border, #444444);
+}
+
+.card-patente {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary, #ff4444);
+    margin: 0;
+}
+
+.card-year {
+    font-size: 0.95rem;
+    color: var(--text-primary, #ffffff);
+    font-weight: 600;
+    background: var(--bg-input, #333333);
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.card-title {
+    margin-bottom: 15px;
+}
+
+.card-title h4 {
+    font-size: 1.2rem;
+    color: var(--text-primary, #ffffff);
+    margin: 0;
+    font-weight: 600;
+}
+
+.card-details {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border, #444444);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 0.9rem;
+    color: var(--text-muted, #999999);
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 0.9rem;
+    color: var(--text-secondary, #e0e0e0);
+    font-weight: 500;
+    text-align: right;
+}
+
+.aceite-info {
+    background: var(--bg-input, #333333);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 15px 0;
+    border-left: 3px solid var(--primary, #ff4444);
+}
+
+.aceite-label {
+    font-size: 0.9rem;
+    color: var(--primary, #ff4444);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.aceite-value {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #e0e0e0);
+    line-height: 1.6;
+    white-space: pre-line;
+    font-family: 'Courier New', monospace;
+}
+
+
+textarea[name="tipo_aceite"],
+textarea#editTipoAceite,
+.modal-content textarea {
+    width: 100% !important;
+    min-height: 100px;
+    max-height: 250px;
+    resize: vertical;
+    padding: 0.875rem;
+    background: var(--bg-input, #1a1a1a);
+    color: var(--text-primary, #ffffff);
+    border: 2px solid var(--border, #444444);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Courier New', Consolas, monospace;
+    line-height: 1.6;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+textarea[name="tipo_aceite"]:focus,
+textarea#editTipoAceite:focus {
+    outline: none;
+    border-color: var(--primary, #ff4444);
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.15);
+}
+
+textarea[name="tipo_aceite"]::placeholder,
+textarea#editTipoAceite::placeholder {
+    color: var(--text-muted, #999999);
+    opacity: 0.7;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-accion {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btn-editar {
+    background: linear-gradient(135deg, var(--primary, #ff4444) 0%, var(--primary-hover, #ff2222) 100%);
+    color: white;
+}
+
+.btn-editar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+}
+
+.btn-eliminar {
+    background: var(--bg-input, #333333);
+    color: var(--text-primary, #ffffff);
+    border: 1px solid var(--border, #444444);
+}
+
+.btn-eliminar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    background: #444444;
+}
+
+.no-vehiculos {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 1.3rem;
+    color: var(--text-muted, #999999);
+}
+
+
+.paginacion-info {
+    text-align: center;
+    padding: 15px;
+    color: var(--text-secondary, #e0e0e0);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.paginacion-controles {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 30px 20px;
+    margin-top: 20px;
+}
+
+.btn-paginacion {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--primary, #ff4444) 0%, var(--primary-hover, #ff2222) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.3);
+}
+
+.btn-paginacion:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+}
+
+.btn-paginacion:disabled {
+    background: var(--bg-input, #333333);
+    color: var(--text-muted, #999999);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pagina-numero {
+    padding: 12px 24px;
+    background: var(--bg-card, #222222);
+    color: var(--primary, #ff4444);
+    border: 2px solid var(--primary, #ff4444);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    min-width: 120px;
+    text-align: center;
+}
+
+
+.toast {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.85rem 1rem;
+    min-width: 280px;
+    max-width: 360px;
+    background: var(--bg-card, #ffffff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-left: 6px solid var(--success, #10b981);
+    box-shadow: var(--shadow-md, 0 10px 30px rgba(0,0,0,0.12));
+    border-radius: 12px;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    z-index: 1200;
+    opacity: 1;
+    transform: translateY(0);
+    color: var(--text-primary, #111827);
+}
+
+.toast.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+    pointer-events: none;
+}
+
+.toast.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.toast-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success, #10b981);
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.toast-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--text-primary, #111827);
+}
+
+.toast-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-primary, #111827);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.toast-close:hover {
+    background: var(--bg-input, #f3f4f6);
+    color: var(--error, #ef4444);
+}
+
+.toast-success {
+    border-left-color: var(--success, #10b981);
+}
+
+.toast-success .toast-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success, #10b981);
+}
+
+.toast-error {
+    border-left-color: var(--error, #ef4444);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.toast-error .toast-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--error, #ef4444);
+}
+
+.toast-warning {
+    border-left-color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.toast-warning .toast-icon {
+    background: rgba(245, 158, 11, 0.18);
+    color: #d97706;
+}
+
+.toast-info {
+    border-left-color: #2563eb;
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+.toast-info .toast-icon {
+    background: rgba(37, 99, 235, 0.15);
+    color: #2563eb;
+}
+
+
+@media (max-width: 1024px) {
+    .vehiculos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        padding: 16px;
+        gap: 20px;
+    }
+
+    .card-imagen {
+        height: 200px;
+    }
+
+    .card-content {
+        padding: 18px;
+    }
+
+    .card-details {
+        gap: 8px;
+    }
+
+    .detail-item {
+        padding: 6px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .vehiculos-grid {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 18px;
+    }
+    
+    .vehiculo-card {
+        border-radius: 10px;
+    }
+
+    .card-imagen {
+        height: 180px;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .card-patente {
+        font-size: 1.2rem;
+    }
+
+    .card-year {
+        font-size: 0.9rem;
+        padding: 4px 10px;
+    }
+
+    .card-title h4 {
+        font-size: 1.1rem;
+    }
+    
+    .card-content {
+        padding: 16px;
+    }
+
+    .card-details {
+        gap: 8px;
+    }
+
+    .detail-item {
+        padding: 6px 0;
+        font-size: 0.9rem;
+    }
+
+    .detail-label {
+        font-size: 0.85rem;
+    }
+
+    .detail-value {
+        font-size: 0.85rem;
+    }
+
+    .aceite-info {
+        padding: 10px;
+        margin: 12px 0;
+    }
+
+    .aceite-label {
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+    }
+
+    .aceite-value {
+        font-size: 0.8rem;
+    }
+
+    textarea[name="tipo_aceite"],
+    textarea#editTipoAceite {
+        min-height: 80px;
+        padding: 0.75rem;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-accion {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .paginacion-controles {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-paginacion {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 16px;
+    }
+    
+    .pagina-numero {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 16px;
+    }
+
+    .paginacion-info {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .btn-file-upload,
+    .btn-camera-upload {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        width: 95%;
+    }
+
+    .modal-form .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .vehiculos-grid {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 14px;
+    }
+
+    .vehiculo-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-imagen {
+        height: 160px;
+    }
+
+    .card-header {
+        gap: 8px;
+    }
+
+    .card-patente {
+        font-size: 1.1rem;
+    }
+
+    .card-title h4 {
+        font-size: 1rem;
+    }
+
+    .card-content {
+        padding: 14px;
+    }
+
+    .card-details {
+        gap: 6px;
+    }
+
+    .detail-item {
+        padding: 5px 0;
+        font-size: 0.85rem;
+    }
+
+    .detail-label {
+        font-size: 0.8rem;
+    }
+
+    .detail-value {
+        font-size: 0.8rem;
+    }
+
+    .card-actions {
+        gap: 6px;
+    }
+
+    .btn-accion {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    .btn-eliminar {
+        font-size: 0.8rem;
+    }
+
+    .paginacion-info {
+        font-size: 0.85rem;
+    }
+
+    .btn-paginacion {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .pagina-numero {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .btn-file-upload,
+    .btn-camera-upload {
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vehiculos-grid {
+        grid-template-columns: 1fr;
+        padding: 8px;
+        gap: 12px;
+    }
+
+    .vehiculo-card {
+        border-radius: 8px;
+        border: 2px solid var(--border);
+    }
+
+    .card-imagen {
+        height: 140px;
+    }
+
+    .sin-imagen span {
+        font-size: 3rem;
+    }
+
+    .sin-imagen p {
+        font-size: 1rem;
+    }
+
+    .card-header {
+        gap: 6px;
+        padding-bottom: 8px;
+    }
+
+    .card-patente {
+        font-size: 1rem;
+    }
+
+    .card-year {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+
+    .card-title h4 {
+        font-size: 0.95rem;
+    }
+
+    .card-content {
+        padding: 12px;
+    }
+
+    .card-details {
+        gap: 5px;
+    }
+
+    .detail-item {
+        padding: 4px 0;
+        font-size: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .detail-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .detail-value {
+        font-size: 0.8rem;
+        text-align: left;
+    }
+
+    .aceite-info {
+        padding: 8px;
+        margin: 10px 0;
+        border-radius: 6px;
+    }
+
+    .aceite-label {
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+    }
+
+    .aceite-value {
+        font-size: 0.75rem;
+    }
+
+    textarea[name="tipo_aceite"],
+    textarea#editTipoAceite {
+        min-height: 70px;
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+
+    .card-actions {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .btn-accion {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .btn-editar {
+        padding: 8px;
+    }
+
+    .btn-eliminar {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .paginacion-info {
+        padding: 10px 5px;
+        font-size: 0.8rem;
+    }
+
+    .paginacion-controles {
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 8px;
+    }
+
+    .btn-paginacion {
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+
+    .pagina-numero {
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 8px 12px;
+        min-width: 100%;
+    }
+
+    .btn-file-upload,
+    .btn-camera-upload {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 8px 10px;
+        border-radius: 6px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 12px;
+    }
+
+    .modal-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .modal-form .form-group {
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 6px 8px;
+        font-size: 16px;
+    }
+
+    .modal-title {
+        font-size: 1rem;
+    }
+
+    .modal-footer {
+        gap: 8px;
+    }
+
+    .btn-cancelar,
+    .btn-guardar {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .toast {
+        min-width: 90%;
+        max-width: 95%;
+        left: 2.5%;
+        right: 2.5%;
+        top: 10px;
+        padding: 10px;
+    }
+
+    .toast-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .toast-text {
+        gap: 0;
+    }
+
+    .toast-title {
+        font-size: 0.8rem;
+    }
+
+    .toast-close {
+        font-size: 0.9rem;
+    }
+}

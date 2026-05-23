@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/usuarios.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<main class="usuarios-wrapper">
+    <header class="usuarios-header">
+        <p class="eyebrow">Administración</p>
+        <h1>Gestión de usuarios</h1>
+        <p class="lede">Esta vista usa datos combinados de <strong>taller.db</strong> y <strong>usuarios.db</strong> para darte contexto.</p>
+    </header>
+
+    <section class="stat-grid">
+        <div class="stat-card">
+            <p class="label">Usuarios</p>
+            <div class="value">{{ totales.usuarios }}</div>
+            <p class="muted">Activos: {{ totales.usuarios_activos }} · Inactivos: {{ totales.usuarios_inactivos }}</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Clientes (taller.db)</p>
+            <div class="value">{{ totales.clientes }}</div>
+            <p class="muted">Registrados</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Vehículos (taller.db)</p>
+            <div class="value">{{ totales.vehiculos }}</div>
+            <p class="muted">En inventario</p>
+        </div>
+        <div class="stat-card">
+            <p class="label">Órdenes de servicio (taller.db)</p>
+            <div class="value">{{ totales.ordenes }}</div>
+            <p class="muted">Histórico</p>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <p class="eyebrow">Crear</p>
+                <h2>Nuevo usuario</h2>
+            </div>
+        </div>
+        <form id="usuarioForm" class="usuario-form">
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="usuario">Usuario</label>
+                    <input id="usuario" name="usuario" type="text" placeholder="ej: admin" required autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" placeholder="opcional" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="rol">Rol</label>
+                    <select id="rol" name="rol" required>
+                        <option value="">Selecciona...</option>
+                        <option value="admin">Administrador</option>
+                        <option value="editor">Editor</option>
+                        <option value="usuario">Usuario Regular</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="contrasena">Contraseña</label>
+                    <input id="contrasena" name="contrasena" type="password" placeholder="Mínimo 4 caracteres" required>
+                </div>
+            </div>
+            <div class="actions">
+                <button type="submit">Guardar usuario</button>
+                <button type="reset" class="ghost">Limpiar</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <p class="eyebrow">Listado</p>
+                <h2>Usuarios registrados</h2>
+                <p class="muted">Incluye estado, rol y últimas sesiones.</p>
+            </div>
+            <button id="refrescarBtn" class="ghost">Refrescar</button>
+        </div>
+        <div id="usuariosEstado" class="estado"></div>
+        <div class="tabla-wrapper">
+            <table class="usuarios-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Creado</th>
+                        <th>Última sesión</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosBody">
+                    {% if usuarios %}
+                        {% for u in usuarios %}
+                        <tr data-id="{{ u.id_usuario }}" data-activo="{{ u.activo }}">
+                            <td data-label="Usuario">{{ u.usuario }}</td>
+                            <td data-label="Rol" class="mono">{{ u.rol }}</td>
+                            <td data-label="Email">{{ u.email or '—' }}</td>
+                            <td data-label="Estado">
+                                {% if u.activo == 1 %}
+                                    <span class="badge success">Activo</span>
+                                {% else %}
+                                    <span class="badge muted">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Creado" class="mono">{{ u.fecha_creacion or '—' }}</td>
+                            <td data-label="Última sesión" class="mono">{{ u.fecha_ultima_sesion or '—' }}</td>
+                            <td data-label="Acciones">
+                                <button class="link-btn" data-accion="toggle">{{ 'Desactivar' if u.activo == 1 else 'Activar' }}</button>
+                                <button class="link-btn" data-accion="reset">Actualizar clave</button>
+                                <button class="link-btn danger" data-accion="eliminar">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr><td colspan="7" class="muted" style="text-align:center;">Sin usuarios registrados aún.</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    const bootstrapUsuarios = {{ usuarios | tojson | safe }};
+    window.bootstrapUsuarios = Array.isArray(bootstrapUsuarios) ? bootstrapUsuarios : [];
+</script>
+<script src="{{ url_for('static', filename='js/usuarios.js') }}"></script>
+</body>
+</html>

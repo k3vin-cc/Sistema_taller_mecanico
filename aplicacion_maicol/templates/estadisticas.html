@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de Ingresos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estadisticas.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<main class="historial-trabajos-wrapper">
+    <section class="stats-header">
+        <h1>📊 Estadísticas de Ingresos</h1>
+        <p>Visualiza los ingresos generados en diferentes períodos de tiempo</p>
+    </section>
+
+    
+    <div class="year-selector">
+        <label for="yearSelect">Selecciona un año:</label>
+        <select id="yearSelect">
+            
+        </select>
+    </div>
+
+    
+    <section class="stats-cards">
+        <div class="stat-card" data-periodo="dia">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+                <h3>Hoy</h3>
+                <div class="stat-amount">$0</div>
+            </div>
+        </div>
+        <div class="stat-card" data-periodo="semana">
+            <div class="stat-icon">📆</div>
+            <div class="stat-content">
+                <h3>Esta Semana</h3>
+                <div class="stat-amount">$0</div>
+            </div>
+        </div>
+        <div class="stat-card" data-periodo="mes">
+            <div class="stat-icon">📊</div>
+            <div class="stat-content">
+                <h3>Este Mes</h3>
+                <div class="stat-amount">$0</div>
+            </div>
+        </div>
+        <div class="stat-card" data-periodo="anio">
+            <div class="stat-icon">📈</div>
+            <div class="stat-content">
+                <h3>Este Año</h3>
+                <div class="stat-amount">$0</div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="resumen-mensual-panel" id="resumenMensualPanel" style="display: none;">
+        <div class="panel-title">
+            <h2>📊 Totales por Mes</h2>
+        </div>
+        <div class="resumen-mensual-grid" id="resumenMensualGrid">
+            
+        </div>
+    </section>
+
+    
+    <section class="trabajos-panel">
+        <div class="panel-title">
+            <h2>📅 Trabajos realizados: Hoy</h2>
+        </div>
+        <div class="tabla-wrapper">
+            <table class="trabajos-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Orden</th>
+                        <th style="width: 120px;">Fecha</th>
+                        <th style="width: 200px;">Cliente</th>
+                        <th style="width: 180px;">Vehículo</th>
+                        <th>Descripción del Trabajo</th>
+                        <th style="width: 90px; text-align: center;">Cant.</th>
+                        <th style="width: 150px; text-align: right;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 50px;">Cargando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+</body>
+</html>

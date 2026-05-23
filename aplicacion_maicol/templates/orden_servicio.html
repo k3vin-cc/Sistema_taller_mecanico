@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehículos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/orden_servicio.css') }}">
+    <style>
+        
+        .sugerencias {
+            position: absolute;
+            background: #1a1a1a; 
+            border: 1px solid #444444;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            width: 100%;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 50;
+            margin-top: 4px;
+            color: #ffffff;
+            border-radius: 6px;
+        }
+        
+        .form-group { position: relative; }
+        .sugerencia-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            color: #ffffff;
+            border-bottom: 1px solid #2b2b2b;
+            font-size: 0.95rem;
+        }
+        .sugerencia-item strong { color: #ffddde; }
+        .sugerencia-item span { color: #cfcfcf; margin-left: 8px; }
+        .sugerencia-item:hover, .sugerencia-item[aria-selected="true"] {
+            background: #2a2a2a;
+        }
+        .is-hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<div id="toast" class="toast is-hidden" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" aria-hidden="true">✓</div>
+    <div class="toast-text">
+        <span class="toast-title">Aviso</span>
+        <span id="toastMessage">Acción realizada</span>
+    </div>
+    <button id="toastClose" type="button" class="toast-close" aria-label="Cerrar">✕</button>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>📋 Ficha Técnica - Orden de Servicio Automotriz</h1>
+        <p>Taller Autosolution</p>
+    </div>
+
+    <form id="formularioServicio">
+        
+        <div class="section cliente-vehiculo">
+            <div class="form-group">
+                <label for="clienteSelect">👤 Cliente</label>
+                <select id="clienteSelect" required>
+                    <option value="">-- Seleccionar Cliente --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="buscarBusqueda">🔎 Buscar Cliente o Patente</label>
+                <input type="text" id="buscarBusqueda" placeholder="Ingresa nombre de cliente o patente (ej: Pérez o ABC123)" autocomplete="off">
+                <div id="sugerenciasBusqueda" class="sugerencias is-hidden" role="listbox" aria-label="Sugerencias de búsqueda"></div>
+            </div>
+            <div class="form-group">
+                <label for="vehiculoSelect">🚗 Vehículo</label>
+                <select id="vehiculoSelect" required>
+                    <option value="">-- Primero selecciona un cliente --</option>
+                </select>
+            </div>
+        </div>
+
+        
+        <div class="section ficha-tecnica">
+            <h2>Datos de la Orden</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="numeroOrden">Número de Orden</label>
+                    <input type="text" id="numeroOrden" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="fechaIngreso">Fecha de Ingreso</label>
+                    <input type="date" id="fechaIngreso" required>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 20px;">Datos del Vehículo</h2>
+            <div class="vehiculo-info-container">
+                <div class="vehiculo-imagen-wrapper">
+                    <img id="fotoVehiculo" src="" alt="Foto del Vehículo" class="imagen-vehiculo-servicio">
+                </div>
+                <div class="vehiculo-datos-wrapper">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <input type="text" id="marca" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo</label>
+                    <input type="text" id="modelo" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="anio">Año de Elaboración</label>
+                    <input type="text" id="anio" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="patente">Patente</label>
+                    <input type="text" id="patente" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="color">Color</label>
+                    <input type="text" id="color" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="chasis">Número de Chasis</label>
+                    <input type="text" id="chasis" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="cilindrada">Cilindrada</label>
+                    <input type="text" id="cilindrada" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="transmision">Tipo de Transmisión</label>
+                    <input type="text" id="transmision" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="traccion">Tipo de Tracción</label>
+                    <input type="text" id="traccion" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="combustible">Tipo de Combustible</label>
+                    <input type="text" id="combustible" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="tipoAceite">Tipos de Aceite</label>
+                        <textarea id="tipoAceite" rows="4" readonly class="textarea-aceite"></textarea>
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="section">
+            <h2>Trabajos Realizados</h2>
+            
+            
+            <div class="tabla-trabajos vista-tabla">
+                <table id="tablaTrabajos">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Cantidad</th>
+                            <th>Descripción del Trabajo</th>
+                            <th style="width: 120px;">Costo Unitario</th>
+                            <th style="width: 120px;">Subtotal</th>
+                            <th style="width: 100px;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fila-trabajo">
+                            <td><input type="number" class="cantidad" value="1" min="1" step="1"></td>
+                            <td><input type="text" class="descripcion" placeholder="Ingresa la descripción..."></td>
+                            <td><input type="number" class="costo" value="" min="0" step="0.01"></td>
+                            <td><input type="number" class="subtotal" readonly></td>
+                            <td><button type="button" class="btn-eliminar-fila" onclick="eliminarFila(this)">Eliminar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            
+            <div id="tarjetasTrabajos" class="tarjetas-trabajos vista-tarjetas">
+                <div class="tarjeta-trabajo">
+                    <div class="tarjeta-header">
+                        <button type="button" class="btn-eliminar-tarjeta" onclick="eliminarTarjeta(this)" title="Eliminar">✕</button>
+                    </div>
+                    <div class="tarjeta-body">
+                        <div class="campo-tarjeta">
+                            <label>Cantidad</label>
+                            <input type="number" class="cantidad" value="1" min="1" step="1">
+                        </div>
+                        <div class="campo-tarjeta">
+                            <label>Descripción del Trabajo</label>
+                            <input type="text" class="descripcion" placeholder="Ingresa la descripción...">
+                        </div>
+                        <div class="campo-tarjeta">
+                            <label>Costo Unitario</label>
+                            <input type="number" class="costo" value="" min="0" step="0.01">
+                        </div>
+                        <div class="campo-tarjeta">
+                            <label>Subtotal</label>
+                            <input type="number" class="subtotal" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-grupo">
+                <button type="button" class="btn btn-secondary btn-small" onclick="agregarFila()">+ Agregar Trabajo</button>
+            </div>
+
+            <div class="resumen">
+                <div class="resumen-row">
+                    <span class="resumen-label">Subtotal:</span>
+                    <span class="resumen-valor">$<span id="subtotalTrabajos">0</span></span>
+                </div>
+                <div class="resumen-row">
+                    <span class="resumen-label">Descuento (%):</span>
+                    <input type="number" id="descuentoPorcentaje" value="0" min="0" max="100" step="0.01">
+                </div>
+                <div class="resumen-row">
+                    <span class="resumen-label">Descuento ($):</span>
+                    <span class="resumen-valor">$<span id="descuentoMonto">0</span></span>
+                </div>
+                <div class="resumen-row total">
+                    <span>Total de Trabajos:</span>
+                    <span>$<span id="totalTrabajos">0</span></span>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="section notas">
+            <h2>Observaciones y Notas</h2>
+            <div class="form-group">
+                <label for="observaciones">Notas del Trabajo</label>
+                <textarea id="observaciones" placeholder="Ingresa observaciones, recomendaciones o notas adicionales sobre el trabajo realizado..."></textarea>
+            </div>
+        </div>
+
+        
+        <div class="btn-grupo">
+            <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">🔄 Limpiar</button>
+            {% if current_user and current_user.rol == 'visor' %}
+            <button type="button" class="btn btn-primary" disabled title="Solo lectura para visor">💾 Guardar Orden de Servicio</button>
+            {% else %}
+            <button type="submit" class="btn btn-primary">💾 Guardar Orden de Servicio</button>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+
+<div id="notificacionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-icon" id="modalIcon">ℹ️</span>
+            <h2 class="modal-title" id="modalTitle">Notificación</h2>
+        </div>
+        <div class="modal-body" id="modalBody">
+            Contenido del mensaje
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-primary" onclick="cerrarModal()">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="confirmacionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-icon">⚠️</span>
+            <h2 class="modal-title" id="confirmTitle">Confirmación</h2>
+        </div>
+        <div class="modal-body" id="confirmBody">
+            ¿Estás seguro?
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-secondary" onclick="cancelarConfirmacion()">Cancelar</button>
+            <button class="modal-btn modal-btn-primary" onclick="confirmarAccion()">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/orden_servicio.js') }}"></script>
+
+</body>
+</html>
+

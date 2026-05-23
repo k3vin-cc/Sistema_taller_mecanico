@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+<main class="login-wrapper">
+    <section class="login-card">
+        <p class="eyebrow">Acceso</p>
+        <h1>Iniciar sesión</h1>
+        <p class="lede">Pagaina para servicios automotriz
+        </p>
+
+        {% if error %}
+        <div class="alert alert-error" role="alert">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+        <div class="alert alert-success" role="status">{{ success }}</div>
+        {% endif %}
+
+        <form class="login-form" method="post" action="/">
+            <label for="usuario">Usuario</label>
+            <input id="usuario" name="usuario" type="text" placeholder="" autocomplete="off" required>
+
+            <label for="contrasena">Contraseña</label>
+            <input id="contrasena" name="contrasena" type="password" placeholder="••••••" autocomplete="off" required>
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+    </section>
+</main>
+
+</body>
+</html>

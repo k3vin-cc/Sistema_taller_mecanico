@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/historial.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<main class="historial-wrapper">
+    <section class="selector-panel">
+        <div class="selector-field">
+            <label for="clienteInput">Cliente</label>
+            <div class="input-wrapper">
+                <input id="clienteInput" placeholder="Buscar y seleccionar cliente" autocomplete="off">
+                <div id="clienteSuggest" class="suggestions" hidden></div>
+            </div>
+            <small id="clienteHelper" class="helper">Escribe el nombre del cliente para buscar y selecciona una coincidencia.</small>
+        </div>
+        <div class="selector-field">
+            <label for="vehiculoInput">Vehículo</label>
+            <div class="input-wrapper">
+                <input id="vehiculoInput" placeholder="Busca por patente o modelo" autocomplete="off" disabled>
+                <div id="vehiculoSuggest" class="suggestions" hidden></div>
+            </div>
+            <small id="vehiculoHelper" class="helper">Puedes buscar por patente directamente o filtrar después de elegir un cliente.</small>
+        </div>
+        <div class="selector-field order-select">
+            <label for="ordenFecha">Ordenar por fecha</label>
+            <select id="ordenFecha">
+                <option value="desc">Más reciente primero</option>
+                <option value="asc">Más antigua primero</option>
+            </select>
+            <small id="ordenFechaHelper" class="helper">Elige cómo ordenar el historial.</small>
+        </div>
+    </section>
+
+    <section class="tabla-panel">
+        <header class="panel-header">
+            <div>
+                <p class="panel-kicker">Historial de servicios</p>
+                <h2 id="panelTitle">Selecciona un vehículo</h2>
+                <p id="panelSubtitle" class="panel-subtitle">Se mostrarán los trabajos realizados en orden descendente.</p>
+            </div>
+        </header>
+
+        <div class="tabla-wrapper">
+            <table class="historial-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">Fecha</th>
+                        <th style="width: 160px;">Tipo de trabajo</th>
+                        <th style="display: none;"></th>
+                        <th style="width: 140px;">Costo</th>
+                        <th style="width: 220px;">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody id="historialBody">
+                    <tr class="empty-row">
+                        <td colspan="5">Selecciona un vehículo para ver su historial.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="paginacion-container">
+            <div class="paginacion-info">
+                <span id="paginacionInfo">Mostrando 0 de 0 trabajos</span>
+            </div>
+            <div class="paginacion-controles">
+                <button id="btnAnterior" class="btn-paginacion" onclick="paginaAnterior()" disabled>← Anterior</button>
+                <span id="paginaActual" class="pagina-numero">Página 1</span>
+                <button id="btnSiguiente" class="btn-paginacion" onclick="paginaSiguiente()" disabled>Siguiente →</button>
+            </div>
+        </div>
+    </section>
+
+    
+    <div id="detalleModal" class="modal-overlay hidden">
+        <div class="modal-content-detalle">
+            <div class="modal-header-detalle">
+                <h2 id="modalTitle">Detalles de la Orden de Servicio</h2>
+                <button class="modal-close" onclick="cerrarModalDetalle()">&times;</button>
+            </div>
+            <div class="modal-body-detalle">
+                
+                <img id="logoPDF" src="{{ url_for('static', filename='../logo.png') }}" alt="Logo Taller" style="display: none; width: 80px; height: auto;">
+                
+                
+                <section class="detail-section">
+                    <h3>📝 Datos de la Orden</h3>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <label>Número de Orden:</label>
+                            <span id="detailNumeroOS">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Fecha:</label>
+                            <span id="detailFechaOS">—</span>
+                        </div>
+                    </div>
+                </section>
+
+                
+                <section class="detail-section">
+                    <h3>👤 Información del Cliente</h3>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <label>Nombre:</label>
+                            <span id="detailClienteNombre">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Teléfono:</label>
+                            <span id="detailClienteTel">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Email:</label>
+                            <span id="detailClienteEmail">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Dirección:</label>
+                            <span id="detailClienteDireccion">—</span>
+                        </div>
+                    </div>
+                </section>
+
+                
+                <section class="detail-section">
+                    <h3>🚗 Información del Vehículo</h3>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <label>Patente:</label>
+                            <span id="detailVehiculoPatente">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Marca:</label>
+                            <span id="detailVehiculoMarca">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Modelo:</label>
+                            <span id="detailVehiculoModelo">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Año:</label>
+                            <span id="detailVehiculoAnio">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Color:</label>
+                            <span id="detailVehiculoColor">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Chasis:</label>
+                            <span id="detailVehiculoChasis">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Cilindrada:</label>
+                            <span id="detailVehiculoCilindrada">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Combustible:</label>
+                            <span id="detailVehiculoCombustible">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Transmisión:</label>
+                            <span id="detailVehiculoTransmision">—</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Tracción:</label>
+                            <span id="detailVehiculoTraccion">—</span>
+                        </div>
+                        <div class="detail-field full">
+                            <label>Tipos de Aceite:</label>
+                            <span id="detailVehiculoAceite">—</span>
+                        </div>
+                    </div>
+                </section>
+
+                
+                <section class="detail-section">
+                    <h3>🔧 Trabajos Realizados</h3>
+                    <div class="tabla-detalles-wrapper">
+                        <table class="tabla-detalles">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">Cantidad</th>
+                                    <th>Descripción</th>
+                                    <th style="width: 120px;">Costo Unit.</th>
+                                    <th style="width: 120px;">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailTrabajosBody">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                
+                <section class="detail-section resumen-costos">
+                    <div class="resumen-row">
+                        <span>Total:</span>
+                        <span id="detailTotal" class="total-amount">$0</span>
+                    </div>
+                </section>
+
+                
+                <section class="detail-section" id="obsSection">
+                    <h3>📋 Observaciones</h3>
+                    <div id="detailObservaciones" class="observaciones-text">—</div>
+                </section>
+            </div>
+            <div class="modal-footer-detalle">
+                <button class="btn-eliminar" onclick="eliminarServicio()">🗑️ Eliminar</button>
+                <button class="btn-descargar-pdf" onclick="descargarPDF()">📥 Descargar PDF</button>
+                <button class="btn-cerrar" onclick="cerrarModalDetalle()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/historial.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

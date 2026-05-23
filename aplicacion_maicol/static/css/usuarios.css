@@ -1,0 +1,657 @@
+body {
+    background: var(--bg-main, #000000);
+    color: var(--text-primary, #ffffff);
+}
+
+.usuarios-wrapper {
+    max-width: 1200px;
+    margin: 40px auto 80px;
+    padding: 0 20px 20px;
+}
+
+.usuarios-header .lede {
+    color: var(--text-secondary, #e0e0e0);
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 24px 0 32px;
+}
+
+.stat-card {
+    background: var(--bg-card, #222222);
+    border: 1px solid var(--border, #444444);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.7));
+}
+
+.stat-card .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted, #999999);
+    margin-bottom: 6px;
+}
+
+.stat-card .value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary, #ff4444);
+}
+
+.stat-card .muted {
+    color: var(--text-muted, #999999);
+}
+
+.panel {
+    background: var(--bg-card, #222222);
+    border: 1px solid var(--border, #444444);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.7));
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.usuario-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: var(--text-primary, #ffffff);
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid var(--border, #444444);
+    background: var(--bg-input, #333333);
+    color: var(--text-primary, #ffffff);
+    font-weight: 500;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    outline: none;
+    border-color: var(--primary, #ff4444);
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.15);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.actions button,
+.panel-head button {
+    background: linear-gradient(135deg, var(--primary, #ff4444) 0%, var(--primary-dark, #dd0000) 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actions button:hover,
+.panel-head button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+}
+
+button.ghost {
+    background: transparent;
+    border: 1px solid var(--border, #444444);
+    color: var(--text-primary, #ffffff);
+}
+
+.tabla-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 12px;
+    border-radius: 10px;
+}
+
+.usuarios-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.usuarios-table th,
+.usuarios-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border, #444444);
+    text-align: left;
+    color: var(--text-primary, #ffffff);
+}
+
+.usuarios-table th {
+    color: var(--text-secondary, #e0e0e0);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    background: var(--bg-input, #333333);
+    letter-spacing: 0.04em;
+}
+
+.badge {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--primary, #ff4444);
+}
+
+.badge.success { 
+    background: rgba(52, 211, 153, 0.15);
+    color: var(--success, #34d399);
+}
+
+.badge.muted { 
+    background: rgba(153, 153, 153, 0.15);
+    color: var(--text-secondary, #e0e0e0);
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--primary, #ff4444);
+    cursor: pointer;
+    padding: 0;
+    margin-right: 10px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.link-btn:hover { 
+    text-decoration: underline;
+    color: var(--primary, #ff4444);
+}
+
+.link-btn.danger {
+    color: #ff6b6b;
+}
+
+.link-btn.danger:hover {
+    color: #ff4444;
+    text-decoration: underline;
+}
+
+.mono { 
+    font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.estado { 
+    color: var(--text-muted, #999999);
+    margin: 6px 0;
+}
+
+@media (max-width: 1024px) {
+    .usuarios-wrapper {
+        margin: 30px auto 60px;
+        padding: 0 15px 15px;
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin: 20px 0 28px;
+    }
+
+    .stat-card {
+        padding: 14px 16px;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+    }
+
+    .panel {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .usuarios-table th,
+    .usuarios-table td {
+        padding: 10px 8px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .usuarios-wrapper {
+        margin: 25px auto 50px;
+        padding: 0 12px 12px;
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 18px 0 24px;
+    }
+
+    .stat-card {
+        padding: 12px 14px;
+        border-radius: 12px;
+    }
+
+    .stat-card .label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .stat-card .value {
+        font-size: 24px;
+    }
+
+    .panel {
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: 14px;
+    }
+
+    .panel-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .panel-head button {
+        width: 100%;
+    }
+
+    .usuario-form {
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .form-field label {
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .actions button {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
+    .tabla-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 10px;
+    }
+
+    .usuarios-table {
+        font-size: 0.85rem;
+        min-width: 600px;
+    }
+
+    .usuarios-table th,
+    .usuarios-table td {
+        padding: 8px 6px;
+        font-size: 0.85rem;
+    }
+
+    .usuarios-table th {
+        font-size: 0.75rem;
+    }
+
+    .badge {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    .link-btn {
+        margin-right: 6px;
+    }
+
+    .estado {
+        font-size: 0.85rem;
+        margin: 4px 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .usuarios-wrapper {
+        margin: 20px auto 40px;
+        padding: 0 10px 10px;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin: 16px 0 20px;
+    }
+
+    .stat-card {
+        padding: 12px 12px;
+    }
+
+    .stat-card .label {
+        font-size: 10px;
+    }
+
+    .stat-card .value {
+        font-size: 22px;
+    }
+
+    .panel {
+        padding: 14px;
+        margin-bottom: 14px;
+    }
+
+    .panel-head {
+        gap: 8px;
+    }
+
+    .usuario-form {
+        gap: 10px;
+    }
+
+    .form-row {
+        gap: 8px;
+    }
+
+    .form-field label {
+        font-size: 0.9rem;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+
+    .actions button {
+        font-size: 0.9rem;
+        padding: 8px 10px;
+    }
+
+    .tabla-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 8px;
+        border-radius: 8px;
+    }
+
+    .usuarios-table {
+        min-width: 550px;
+        font-size: 0.75rem;
+    }
+
+    .usuarios-table th,
+    .usuarios-table td {
+        padding: 5px 4px;
+        font-size: 0.75rem;
+    }
+
+    .usuarios-table th {
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    
+    .usuarios-table th:nth-child(5),
+    .usuarios-table td:nth-child(5) {
+        display: none;
+    }
+
+    .badge {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+
+    .link-btn {
+        font-size: 0.75rem;
+        margin-right: 6px;
+        display: inline-block;
+        margin-bottom: 2px;
+    }
+
+    .estado {
+        font-size: 0.85rem;
+        margin: 4px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .usuarios-wrapper {
+        margin: 15px auto 30px;
+        padding: 0 8px 8px;
+    }
+
+    .usuarios-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .usuarios-header .lede {
+        font-size: 0.9rem;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin: 12px 0 16px;
+    }
+
+    .stat-card {
+        padding: 10px 10px;
+        border-radius: 10px;
+    }
+
+    .stat-card .label {
+        font-size: 9px;
+        margin-bottom: 3px;
+    }
+
+    .stat-card .value {
+        font-size: 20px;
+    }
+
+    .panel {
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+
+    .panel-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .panel-head button {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .usuario-form {
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .form-field {
+        margin-bottom: 0;
+    }
+
+    .form-field label {
+        font-size: 0.85rem;
+        margin-bottom: 3px;
+        font-weight: 600;
+    }
+
+    .form-field input,
+    .form-field select {
+        padding: 8px 10px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .actions button {
+        width: 100%;
+        padding: 8px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+
+    .tabla-wrapper {
+        overflow: visible;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 8px;
+        border-radius: 8px;
+        margin-left: -12px;
+        margin-right: -12px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    
+    .usuarios-table {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: auto;
+        font-size: 0.7rem;
+        border: none;
+    }
+
+    .usuarios-table thead {
+        display: none;
+    }
+
+    .usuarios-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .usuarios-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-card, #222222);
+        border: 1px solid var(--border, #444444);
+        border-radius: 10px;
+        padding: 12px;
+        gap: 8px;
+        border-bottom: none;
+    }
+
+    .usuarios-table td {
+        padding: 0;
+        border-bottom: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+        word-break: break-word;
+    }
+
+    
+    .usuarios-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--primary, #ff4444);
+        min-width: 80px;
+    }
+
+    .usuarios-table td:nth-child(1)::before { content: "Usuario"; }
+    .usuarios-table td:nth-child(2)::before { content: "Rol"; }
+    .usuarios-table td:nth-child(3)::before { content: "Email"; }
+    .usuarios-table td:nth-child(4)::before { content: "Estado"; }
+    .usuarios-table td:nth-child(5)::before { content: "Creado"; }
+    .usuarios-table td:nth-child(6)::before { content: "Sesión"; }
+    .usuarios-table td:nth-child(7)::before { content: "Acciones"; }
+
+    
+    .usuarios-table td:nth-child(5),
+    .usuarios-table td:nth-child(6) {
+        display: none;
+    }
+
+    .badge {
+        padding: 2px 5px;
+        font-size: 9px;
+        border-radius: 4px;
+    }
+
+    .link-btn {
+        font-size: 0.7rem;
+        margin-right: 0;
+        display: block;
+        margin-bottom: 3px;
+        color: var(--primary, #ff4444);
+    }
+
+    .link-btn:hover {
+        text-decoration: underline;
+    }
+
+    .estado {
+        font-size: 0.8rem;
+        margin: 3px 0;
+    }
+
+    .mono {
+        font-size: 0.7rem;
+        word-break: break-all;
+    }
+}

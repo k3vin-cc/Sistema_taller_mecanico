@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/clientes.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<div id="toast" class="toast is-hidden" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" aria-hidden="true">✓</div>
+    <div class="toast-text">
+        <span class="toast-title">Aviso</span>
+        <span id="toastMessage">Acción realizada</span>
+    </div>
+    <button id="toastClose" type="button" class="toast-close" aria-label="Cerrar">✕</button>
+</div>
+
+<h2>Clientes</h2>
+
+<div class="filtros-container">
+    <div class="filtro-group">
+        <label for="filtro-nombre">🔍 Nombre:</label>
+        <input type="text" id="filtro-nombre" placeholder="Buscar por nombre..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-telefono">📱 Teléfono:</label>
+        <input type="text" id="filtro-telefono" placeholder="Buscar por teléfono..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-correo">📧 Correo:</label>
+        <input type="text" id="filtro-correo" placeholder="Buscar por correo..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-direccion">📍 Dirección:</label>
+        <input type="text" id="filtro-direccion" placeholder="Buscar por dirección..." onkeyup="filtrarTabla()">
+    </div>
+    <button onclick="limpiarFiltros()" class="btn-limpiar">✕ Limpiar</button>
+</div>
+
+<div class="paginacion-info">
+    <span id="paginaInfo">Mostrando 0 de 0 clientes</span>
+</div>
+
+<div class="clientes-grid" id="clientesGrid">
+    {% for cliente in clientes %}
+    <div class="cliente-card" data-nombre="{{ cliente.nombres }}" data-telefono="{{ cliente.numero_contacto }}" data-correo="{{ cliente.correo_electronico }}" data-direccion="{{ cliente.direccion }}" data-id="{{ cliente.id }}">
+        <div class="card-content">
+            <div class="card-header">
+                <h3 class="card-nombre">👤 {{ cliente.nombres }} {{ cliente.apellidos }}</h3>
+                <span class="card-id">#{{ cliente.id }}</span>
+            </div>
+            <div class="card-details">
+                <div class="detail-item">
+                    <span class="detail-label">🆔 RUT:</span>
+                    <span class="detail-value">{{ cliente.rut if cliente.rut else 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📱 Teléfono:</span>
+                    <span class="detail-value">{{ cliente.numero_contacto if cliente.numero_contacto else 'N/A' }}</span>
+                </div>
+                {% if cliente.numero_contacto_alternativo %}
+                <div class="detail-item">
+                    <span class="detail-label">📱 Teléfono Alternativo:</span>
+                    <span class="detail-value">{{ cliente.numero_contacto_alternativo }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <span class="detail-label">📧 Correo:</span>
+                    <span class="detail-value">{{ cliente.correo_electronico if cliente.correo_electronico else 'N/A' }}</span>
+                </div>
+                {% if cliente.direccion %}
+                <div class="detail-item">
+                    <span class="detail-label">📍 Dirección:</span>
+                    <span class="detail-value">{{ cliente.direccion }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% if not current_user or current_user.rol != 'visor' %}
+            <div class="card-actions">
+                <button class="btn-accion btn-editar" data-id="{{ cliente.id }}" data-nombres="{{ cliente.nombres }}" data-apellidos="{{ cliente.apellidos }}" data-rut="{{ cliente.rut }}" data-numero_contacto="{{ cliente.numero_contacto }}" data-numero_contacto_alternativo="{{ cliente.numero_contacto_alternativo }}" data-correo_electronico="{{ cliente.correo_electronico }}" data-direccion="{{ cliente.direccion }}">✏️ Editar</button>
+                <button class="btn-accion btn-eliminar" data-id="{{ cliente.id }}" data-nombre="{{ cliente.nombres }}">🗑️ Eliminar</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="no-clientes">
+        <p>👥 No hay clientes registrados</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="paginacion-controles">
+    <button id="btnAnterior" class="btn-paginacion" onclick="paginaAnterior()">← Anterior</button>
+    <span id="paginaActual" class="pagina-numero">Página 1</span>
+    <button id="btnSiguiente" class="btn-paginacion" onclick="paginaSiguiente()">Siguiente →</button>
+</div>
+
+
+<div id="modalEditar" class="modal" style="display:none;">
+    <div class="modal-content modal-edit">
+        <span class="close">&times;</span>
+        <h3 class="modal-title">Editar Cliente</h3>
+        <form id="formEditar" class="modal-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nombres *</label>
+                    <input type="text" id="editNombres" required>
+                </div>
+                <div class="form-group">
+                    <label>Apellidos *</label>
+                    <input type="text" id="editApellidos" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>RUT</label>
+                    <input type="text" id="editRut" placeholder="20.891.996-2">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Teléfono *</label>
+                    <input type="tel" id="editNumeroContacto" required>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono Alternativo</label>
+                    <input type="tel" id="editNumeroContactoAlternativo">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Correo Electrónico *</label>
+                    <input type="email" id="editCorreoElectronico">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" id="editDireccion">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/clientes.js') }}"></script>
+</body>
+</html>

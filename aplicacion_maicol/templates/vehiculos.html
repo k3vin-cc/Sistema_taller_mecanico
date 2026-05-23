@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehículos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vehiculos.css') }}">
+</head>
+<body>
+
+<nav class="main-nav">
+    <div class="nav-links">
+        <img src="/logo.png" alt="Logo Taller" style="height: 35px; width: auto; margin-right: 15px;">
+        <a href="/registro" class="{% if request.path == '/registro' %}active{% endif %}">📝 Registro</a>
+        <a href="/vehiculos" class="{% if request.path == '/vehiculos' %}active{% endif %}">🚗 Vehículos</a>
+        <a href="/clientes" class="{% if request.path == '/clientes' %}active{% endif %}">👥 Clientes</a>
+        <a href="/orden-servicio" class="{% if request.path == '/orden-servicio' %}active{% endif %}">🛠️ Orden de Servicio</a>
+        <a href="/historial" class="{% if request.path == '/historial' %}active{% endif %}">🕒 Historial de Órdenes</a>
+        <a href="/estadisticas" class="{% if request.path == '/estadisticas' %}active{% endif %}">📊 Estadísticas</a>
+        {% if current_user and current_user.rol == 'admin' %}
+        <a href="/gestion-usuarios" class="{% if request.path == '/gestion-usuarios' %}active{% endif %}">👤 Usuarios</a>
+        {% endif %}
+        {% if current_user %}
+        <a href="/logout">🚪 Cerrar sesión</a>
+        {% endif %}
+    </div>
+    <span class="nav-brand">Taller Autosolution</span>
+</nav>
+
+<div id="toast" class="toast is-hidden" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" aria-hidden="true">✓</div>
+    <div class="toast-text">
+        <span class="toast-title">Aviso</span>
+        <span id="toastMessage">Acción realizada</span>
+    </div>
+    <button id="toastClose" type="button" class="toast-close" aria-label="Cerrar">✕</button>
+</div>
+
+<h2>Vehículos</h2>
+
+<div class="filtros-container">
+    <div class="filtro-group">
+        <label for="filtro-nombre">🔍 Patente:</label>
+        <input type="text" id="filtro-nombre" placeholder="Buscar por patente..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-patente">🏷️ Marca:</label>
+        <input type="text" id="filtro-patente" placeholder="Buscar por marca..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-tipo">🚗 Tipo de Vehículo:</label>
+        <input type="text" id="filtro-tipo" placeholder="Buscar por tipo..." onkeyup="filtrarTabla()">
+    </div>
+    <div class="filtro-group">
+        <label for="filtro-modelo">📋 Modelo:</label>
+        <input type="text" id="filtro-modelo" placeholder="Buscar por modelo..." onkeyup="filtrarTabla()">
+    </div>
+    <button onclick="limpiarFiltros()" class="btn-limpiar">✕ Limpiar</button>
+</div>
+
+<div class="paginacion-info">
+    <span id="paginaInfo">Mostrando 0 de 0 vehículos</span>
+</div>
+
+<div class="vehiculos-grid" id="vehiculosGrid">
+    {% for vehiculo in vehiculos %}
+    <div class="vehiculo-card" data-nombre="{{ vehiculo.patente }}" data-patente="{{ vehiculo.patente }}" data-tipo="{{ vehiculo.modelo }}" data-modelo="{{ vehiculo.modelo }}" data-id="{{ vehiculo.id }}">
+        <div class="card-imagen">
+            {% if vehiculo.nombre_imagen %}
+                <img src="/uploads/{{ vehiculo.nombre_imagen }}" alt="{{ vehiculo.marca }} {{ vehiculo.modelo }}" onclick="abrirImagenGrande('/uploads/{{ vehiculo.nombre_imagen }}')">
+            {% else %}
+                <div class="sin-imagen">
+                    <span>🚗</span>
+                    <p>Sin imagen</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-content">
+            <div class="card-header">
+                <h3 class="card-patente">📍 {{ vehiculo.patente }}</h3>
+                <span class="card-year">📅 {{ vehiculo.anio_elaboracion }}</span>
+            </div>
+            <div class="card-title">
+                <h4>{{ vehiculo.marca }} {{ vehiculo.modelo }}</h4>
+            </div>
+            <div class="card-details">
+                <div class="detail-item">
+                    <span class="detail-label">🎨 Color:</span>
+                    <span class="detail-value">{{ vehiculo.color }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🔢 Chasis:</span>
+                    <span class="detail-value">{{ vehiculo.numero_chasis }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">⛽ Combustible:</span>
+                    <span class="detail-value">{{ vehiculo.tipo_combustible }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">⚙️ Transmisión:</span>
+                    <span class="detail-value">{{ vehiculo.transmision }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🔧 Tracción:</span>
+                    <span class="detail-value">{{ vehiculo.traccion }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">💨 Cilindrada:</span>
+                    <span class="detail-value">{{ vehiculo.cilindrada }}</span>
+                </div>
+            </div>
+            {% if vehiculo.tipo_aceite %}
+            <div class="aceite-info">
+                <div class="aceite-label">🛢️ Tipos de Aceite:</div>
+                <div class="aceite-value">{{ vehiculo.tipo_aceite }}</div>
+            </div>
+            {% endif %}
+            {% if not current_user or current_user.rol != 'visor' %}
+            <div class="card-actions">
+                <button class="btn-accion btn-editar" data-id="{{ vehiculo.id }}" data-cliente-id="{{ vehiculo.cliente_id }}" data-marca-id="{{ vehiculo.marca_id }}" data-imagen-id="{{ vehiculo.imagen_id }}" data-transmision-id="{{ vehiculo.transmision_id }}" data-traccion-id="{{ vehiculo.traccion_id }}" data-combustible-id="{{ vehiculo.tipo_combustible_id }}">✏️ Editar</button>
+                <button class="btn-accion btn-eliminar" data-id="{{ vehiculo.id }}" data-patente="{{ vehiculo.patente }}">🗑️ Eliminar</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="no-vehiculos">
+        <p>🚗 No hay vehículos registrados</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="paginacion-controles">
+    <button id="btnAnterior" class="btn-paginacion" onclick="paginaAnterior()">← Anterior</button>
+    <span id="paginaActual" class="pagina-numero">Página 1</span>
+    <button id="btnSiguiente" class="btn-paginacion" onclick="paginaSiguiente()">Siguiente →</button>
+</div>
+
+
+<div id="modalEditar" class="modal" style="display:none;">
+    <div class="modal-content modal-edit">
+        <span class="close">&times;</span>
+        <h3 class="modal-title">Editar Vehículo</h3>
+        <form id="formEditar" class="modal-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Patente</label>
+                    <input type="text" id="editPatente" required>
+                </div>
+                <div class="form-group">
+                    <label>Marca</label>
+                    <select id="editMarca" required></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Modelo</label>
+                    <input type="text" id="editModelo" required>
+                </div>
+                <div class="form-group">
+                    <label>Año</label>
+                    <input type="number" id="editAnio" min="1900" max="2099" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Color</label>
+                    <input type="text" id="editColor">
+                </div>
+                <div class="form-group">
+                    <label>Chasis</label>
+                    <input type="text" id="editChasis" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cilindrada</label>
+                    <input type="text" id="editCilindrada">
+                </div>
+                <div class="form-group">
+                    <label>Transmisión</label>
+                    <select id="editTransmision"></select>
+                </div>
+            </div>
+            <div class="form-group form-group-full">
+                <label>Tipos de Aceite (Motor, Caja, Dirección, etc.)</label>
+                <textarea id="editTipoAceite" rows="4" placeholder="Ej:\nMotor: 5W-30\nCaja: 75W-90\nDirección: ATF Dexron III"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tracción</label>
+                    <select id="editTraccion"></select>
+                </div>
+                <div class="form-group">
+                    <label>Combustible</label>
+                    <select id="editCombustible"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Imagen del Vehículo</label>
+                <select id="editImagen">
+                    <option value="">-- Seleccionar Imagen --</option>
+                </select>
+            </div>
+            <div id="previewEditImagen" style="margin-top: 15px;">
+                <img id="imagenEditPreview" src="" alt="Preview" style="max-width: 300px; max-height: 300px; display: none; border-radius: 4px; border: 1px solid #ddd; padding: 5px;">
+            </div>
+            <div class="form-group">
+                <label style="margin-top: 20px;">O Subir Nueva Imagen (subida automática)</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <label for="editInputImagen" class="btn-file-upload">
+                        📁 Seleccionar Archivo
+                        <input type="file" id="editInputImagen" accept="image/*" style="display: none;">
+                    </label>
+                    <label for="editInputCamara" class="btn-camera-upload">
+                        📷 Tomar Foto
+                        <input type="file" id="editInputCamara" accept="image/*" capture="environment" style="display: none;">
+                    </label>
+                </div>
+                <div id="editEstadoImagen" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-guardar">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="modalImagenGrande" class="modal" style="display:none; z-index: 1000;">
+    <div class="modal-content" style="width: 90%; max-width: 800px; max-height: 90vh;">
+        <span class="close">&times;</span>
+        <img id="imagenGrande" src="" alt="Imagen" style="width: 100%; height: auto; border-radius: 4px;">
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/vehiculos.js') }}"></script>

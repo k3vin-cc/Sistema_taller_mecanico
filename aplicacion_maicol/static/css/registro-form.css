@@ -1,0 +1,52 @@
+
+
+
+
+.btn-file-upload,
+.btn-camera-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-file-upload {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+}
+
+.btn-file-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-camera-upload {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+}
+
+.btn-camera-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+.btn-file-upload:active,
+.btn-camera-upload:active {
+    transform: translateY(0);
+}
+
+
+@media (max-width: 768px) {
+    .btn-file-upload,
+    .btn-camera-upload {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+}
